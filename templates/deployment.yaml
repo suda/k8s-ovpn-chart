@@ -1,0 +1,57 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ovpn0
+  namespace: ovpn
+  labels:
+    app: ovpn0
+    track: stable
+spec:
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name: openvpn
+        app: ovpn0
+    spec:
+      containers:
+        - image: kylemanna/openvpn
+          name: ovpn
+          ports:
+            - containerPort: 1194
+              name: openvpn
+              protocol: UDP
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          volumeMounts:
+            - name: ovpn0-key
+              mountPath: /etc/openvpn/pki/private
+            - name: ovpn0-cert
+              mountPath: /etc/openvpn/pki/issued
+            - name: ovpn0-pki
+              mountPath: /etc/openvpn/pki
+            - name: ovpn0-conf
+              mountPath: /etc/openvpn
+            - name: ccd0
+              mountPath: /etc/openvpn/ccd
+      volumes:
+        - name: ovpn0-key
+          secret:
+            secretName: ovpn0-key
+            defaultMode: 0600
+        - name: ovpn0-cert
+          secret:
+            secretName: ovpn0-cert
+        - name: ovpn0-pki
+          secret:
+            secretName: ovpn0-pki
+            defaultMode: 0600
+        - name: ovpn0-conf
+          configMap:
+            name: ovpn0-conf
+        - name: ccd0
+          configMap:
+            name: ccd0
