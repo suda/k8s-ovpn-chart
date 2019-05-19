@@ -1,23 +1,30 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: ovpn0
-  namespace: ovpn
+  name: {{ include "k8s-ovpn-chart.fullname" . }}
+  namespace: {{ .Values.namespace.name }}
   labels:
-    app: ovpn0
-    track: stable
+    app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
+    helm.sh/chart: {{ include "k8s-ovpn-chart.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   strategy:
     type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        name: openvpn
-        app: ovpn0
+        app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
-        - image: kylemanna/openvpn
-          name: ovpn
+        - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          name: {{ .Chart.Name }}
           ports:
             - containerPort: 1194
               name: openvpn
@@ -37,6 +44,20 @@ spec:
               mountPath: /etc/openvpn
             - name: ccd0
               mountPath: /etc/openvpn/ccd
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
       volumes:
         - name: ovpn0-key
           secret:
