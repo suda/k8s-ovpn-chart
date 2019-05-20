@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  k8s-ovpn-chart:
+    - apiVersion: v1
+      appVersion: "2.3"
+      created: 2019-05-20T14:40:20.448525+02:00
+      description: Roll your own OpenVPN server
+      digest: ce0e08106ac87acc924a08768972f3d13103004e11f2b792c3d4b5b115f5866e
+      name: k8s-ovpn-chart
+      urls:
+        - https://github.com/suda/k8s-ovpn-chart/releases/download/0.1.0/k8s-ovpn-chart-0.1.0.tgz
+      version: 0.1.0
+generated: 2019-05-20T14:40:20.446959+02:00
