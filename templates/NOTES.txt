@@ -1,0 +1,8 @@
+Your private OpenVPN server has been deployed!
+
+It's running on port {{ .Values.service.port }} over {{ .Values.service.protocol }} protocol.
+Please update your firewall accordingly.
+
+{{ if .Values.limitTraficToNamespace -}}
+⚠️  When connected to the VPN you won't have access to any Pods within the cluster.
+{{- end -}}
