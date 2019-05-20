@@ -2,8 +2,8 @@
 
 # Private Kubernetes OpenVPN Helm chart
 
-TL;DR: This Chart is intended for deploying a privaet VPN server **without access to other Pods in the cluster**.
-Think of it as roll-your-own NordVPN/ExpressVPN in your Kubernetes cluster.
+TL;DR: This Chart is intended for deploying a private VPN server **without access to other Pods in the cluster**.
+Think of it as roll-your-own Nord/Express VPN in your Kubernetes cluster.
 
 ## Usage
 
