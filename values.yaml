@@ -13,6 +13,7 @@ fullnameOverride: ""
 service:
   protocol: TCP
   port: 31304
+  type: NodePort
 
 limitTraficToNamespace: true
 limitedCidr: "10.0.0.0/8"

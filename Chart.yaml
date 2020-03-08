@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "2.3"
 description: Roll your own OpenVPN server
 name: k8s-ovpn-chart
-version: 0.1.0
+version: 0.1.1

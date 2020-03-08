@@ -8,14 +8,26 @@ metadata:
     helm.sh/chart: {{ include "k8s-ovpn-chart.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- if .Values.service.annotations }}
+  annotations:
+    {{ toYaml .Values.service.annotations | indent 4 }}
+  {{- end }}
 spec:
   ports:
     - port: 1194
       targetPort: 1194
+      {{- if not .Values.service.omitNodePort }}
       nodePort: {{ .Values.service.port }}
+      {{- end }}
       protocol: {{ .Values.service.protocol }}
       name: openvpn
   selector:
     app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-  type: NodePort
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  {{- if .Values.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
+  {{- end }}
