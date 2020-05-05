@@ -28,7 +28,7 @@ spec:
           ports:
             - containerPort: 1194
               name: openvpn
-              protocol: UDP
+              protocol: {{ .Values.service.protocol }}
           securityContext:
             capabilities:
               add:
