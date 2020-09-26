@@ -33,5 +33,5 @@ ensure-environment() {
 
   VPN_URI=${VPN_PROTOCOL}://${VPN_HOSTNAME}:${VPN_PORT}
   # Get the APP_VERSION from Chart.yaml
-  APP_VERSION=$(cat Chart.yaml | grep "appVersion" | awk '{print $2}' | sed s/\"//g)
+  APP_VERSION=$(cat charts/k8s-ovpn-chart/Chart.yaml | grep "appVersion" | awk '{print $2}' | sed s/\"//g)
 }

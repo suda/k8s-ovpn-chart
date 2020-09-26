@@ -1,9 +1,8 @@
-{{- if .Values.limitTraficToNamespace -}}
+{{- if .Values.limitTraficToNamespace }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: {{ include "k8s-ovpn-chart.fullname" . }}
-  namespace: {{ .Values.namespace.name }}
   labels:
     app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
     helm.sh/chart: {{ include "k8s-ovpn-chart.chart" . }}
@@ -19,4 +18,4 @@ spec:
           cidr: 0.0.0.0/0
           except:
           - {{ .Values.limitedCidr }}
-{{- end -}}
+{{- end }}
