@@ -1,0 +1,11 @@
+---
+service:
+  protocol: UDP
+  port: 1194
+  type: ClusterIP
+
+automatic:
+  enabled: true
+  extraOptions:
+    - 'management 0.0.0.0 5555'
+    - 'push "redirect-gateway def1 bypass-dhcp"'

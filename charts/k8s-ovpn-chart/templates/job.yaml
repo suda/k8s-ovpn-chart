@@ -48,6 +48,10 @@ spec:
           - "-b"
           - "-n"
           - "$(DNS_SERVER)"
+          {{- range .Values.automatic.extraOptions }}
+          - -e
+          - {{ . | squote }}
+          {{- end }}
         volumeMounts:
           - name: data
             mountPath: {{ .Values.automatic.persistence.mountPath }}
