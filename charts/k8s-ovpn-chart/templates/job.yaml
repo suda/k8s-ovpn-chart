@@ -1,0 +1,104 @@
+{{- if .Values.automatic.enabled }}
+{{ $hostname := "domain.tld" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "k8s-ovpn-chart.fullname" . }}-ovpn-genconfig"
+  labels:
+    app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
+    helm.sh/chart: {{ include "k8s-ovpn-chart.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: {{ include "k8s-ovpn-chart.fullname" . }}
+      labels:
+        app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: ovpn-genconfig
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        env:
+          - name: SERVER_PUBLIC_URL
+            value: "{{ .Values.service.protocol | lower }}://{{ .Values.externalHostname | default $hostname }}:{{ .Values.externalPort | default .Values.service.port }}"
+          - name: CIPHER
+            value: "{{ .Values.automatic.cipher }}"
+          - name: DIGEST_ALGORYTHM
+            value: "{{ .Values.automatic.digestAlgorythm }}"
+          - name: DNS_SERVER
+            value: "{{ .Values.automatic.dnsServer }}"
+        command:
+          - /usr/local/bin/ovpn_genconfig
+        args:
+          - "-u"
+          - "$(SERVER_PUBLIC_URL)"
+          - "-C"
+          - "$(CIPHER)"
+          - "-a"
+          - "$(DIGEST_ALGORYTHM)"
+          - "-b"
+          - "-n"
+          - "$(DNS_SERVER)"
+        volumeMounts:
+          - name: data
+            mountPath: {{ .Values.automatic.persistence.mountPath }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ if .Values.automatic.persistence.existingClaim }}{{ .Values.automatic.persistence.existingClaim }}{{- else }}{{ include "k8s-ovpn-chart.fullname" . }}{{- end }}
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "k8s-ovpn-chart.fullname" . }}-ovpn-initpki"
+  labels:
+    app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
+    helm.sh/chart: {{ include "k8s-ovpn-chart.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: {{ include "k8s-ovpn-chart.fullname" . }}
+      labels:
+        app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: ovpn-initpki
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        env:
+          - name: EASYRSA_REQ_CN
+            value: {{ .Values.externalHostanme | default $hostname }}
+          - name: EASYRSA_BATCH
+            value: "yes"
+        command:
+          - /usr/local/bin/ovpn_initpki
+        args:
+          - "nopass"
+        volumeMounts:
+          - name: data
+            mountPath: {{ .Values.automatic.persistence.mountPath }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ if .Values.automatic.persistence.existingClaim }}{{ .Values.automatic.persistence.existingClaim }}{{- else }}{{ include "k8s-ovpn-chart.fullname" . }}{{- end }}
+{{- end }}

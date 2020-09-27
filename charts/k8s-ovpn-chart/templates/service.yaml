@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "k8s-ovpn-chart.fullname" . }}
-  namespace: {{ .Values.namespace.name }}
   labels:
     app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
     helm.sh/chart: {{ include "k8s-ovpn-chart.chart" . }}
@@ -14,11 +13,8 @@ metadata:
   {{- end }}
 spec:
   ports:
-    - port: 1194
-      targetPort: 1194
-      {{- if not .Values.service.omitNodePort }}
-      nodePort: {{ .Values.service.port }}
-      {{- end }}
+    - port: {{ .Values.service.port }}
+      targetPort: openvpn
       protocol: {{ .Values.service.protocol }}
       name: openvpn
   selector:

@@ -1,0 +1,74 @@
+name: Lint and Test Charts
+
+on: pull_request
+
+jobs:
+  lint-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run helm-docs
+        run: .github/helm-docs.sh
+
+  kubeval:
+    runs-on: ubuntu-latest
+    needs:
+      - lint-docs
+    strategy:
+      matrix:
+        k8s:
+          - v1.18.8
+          - v1.19.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run kubeval
+        env:
+          KUBERNETES_VERSION: ${{ matrix.k8s }}
+        run: .github/kubeval.sh
+
+  lint:
+    runs-on: ubuntu-latest
+    needs:
+      - kubeval
+    strategy:
+      matrix:
+        k8s:
+          - v1.18.8
+          - v1.19.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch history
+        run: git fetch --prune --unshallow
+      - name: Run chart-testing (lint)
+        id: lint
+        uses: helm/chart-testing-action@v1.1.0
+        with:
+          command: lint
+          config: ct.yaml
+
+  test:
+    runs-on: ubuntu-latest
+    needs:
+      - lint
+    strategy:
+      matrix:
+        k8s:
+          - v1.18.8
+          - v1.19.1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch history
+        run: git fetch --prune --unshallow
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.0.0
+        with:
+          node_image: kindest/node:${{ matrix.k8s }}
+      - name: Run chart-testing (install)
+        uses: helm/chart-testing-action@v1.1.0
+        with:
+          command: install
+          config: ct.yaml
