@@ -58,7 +58,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: {{ if .Values.automatic.persistence.existingClaim }}{{ .Values.automatic.persistence.existingClaim }}{{- else }}{{ include "k8s-ovpn-chart.fullname" . }}{{- end }}
+            claimName: {{ if .Values.automatic.persistence.existingClaim }}{{ .Values.automatic.persistence.existingClaim }}{{- else }}{{ include "k8s-ovpn-chart.name" . }}{{- end }}
 
 ---
 
@@ -91,7 +91,7 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         env:
           - name: EASYRSA_REQ_CN
-            value: {{ .Values.externalHostanme | default $hostname }}
+            value: {{ .Values.externalHostname | default $hostname }}
           - name: EASYRSA_BATCH
             value: "yes"
         command:
@@ -104,5 +104,5 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: {{ if .Values.automatic.persistence.existingClaim }}{{ .Values.automatic.persistence.existingClaim }}{{- else }}{{ include "k8s-ovpn-chart.fullname" . }}{{- end }}
+            claimName: {{ if .Values.automatic.persistence.existingClaim }}{{ .Values.automatic.persistence.existingClaim }}{{- else }}{{ include "k8s-ovpn-chart.name" . }}{{- end }}
 {{- end }}

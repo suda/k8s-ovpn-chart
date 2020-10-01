@@ -2,11 +2,9 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ include "k8s-ovpn-chart.fullname" . }}
+  name: {{ include "k8s-ovpn-chart.name" . }}
   labels: {{- include "k8s-ovpn-chart.labels" . | nindent 4 }}
   annotations:
-    # This is what defines this resource as a hook. Without this line, the
-    # job is considered part of the release.
     "helm.sh/hook": pre-install
     "helm.sh/hook-weight": "-15"
 spec:
