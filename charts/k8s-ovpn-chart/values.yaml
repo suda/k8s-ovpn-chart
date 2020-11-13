@@ -6,6 +6,10 @@ image:
   # image.pullPolicy -- container image pull policy
   pullPolicy: IfNotPresent
 
+namespace:
+  # namespace -- release namespace
+  name: ovpn
+
 # nameOverride -- release name override option
 nameOverride: ""
 # fullnameOverride -- release full release name override option

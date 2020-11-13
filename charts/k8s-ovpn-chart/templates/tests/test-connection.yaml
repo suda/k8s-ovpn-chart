@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "{{ include "k8s-ovpn-chart.fullname" . }}-test-connection"
+  namespace: {{ .Values.namespace.name }}
   labels:
     {{- include "k8s-ovpn-chart.labels" . | nindent 4 }}
   annotations:

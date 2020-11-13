@@ -4,6 +4,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: "{{ include "k8s-ovpn-chart.fullname" . }}-ovpn-genconfig"
+  namespace: {{ .Values.namespace.name }}
   labels:
     app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
     helm.sh/chart: {{ include "k8s-ovpn-chart.chart" . }}
@@ -66,6 +67,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: "{{ include "k8s-ovpn-chart.fullname" . }}-ovpn-initpki"
+  namespace: {{ .Values.namespace.name }}
   labels:
     app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
     helm.sh/chart: {{ include "k8s-ovpn-chart.chart" . }}

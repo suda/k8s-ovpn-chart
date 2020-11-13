@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "k8s-ovpn-chart.fullname" . }}
+  namespace: {{ .Values.namespace.name }}
   labels:
     app.kubernetes.io/name: {{ include "k8s-ovpn-chart.name" . }}
     helm.sh/chart: {{ include "k8s-ovpn-chart.chart" . }}

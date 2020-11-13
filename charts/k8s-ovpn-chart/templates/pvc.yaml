@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: {{ include "k8s-ovpn-chart.name" . }}
+  namespace: {{ .Values.namespace.name }}
   labels: {{- include "k8s-ovpn-chart.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": pre-install
