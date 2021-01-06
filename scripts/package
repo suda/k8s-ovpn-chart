@@ -2,7 +2,7 @@
 
 set -e
 
-helm package .
+helm package ./charts/k8s-ovpn-chart
 helm repo index .
 
 echo "Next steps:"

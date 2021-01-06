@@ -2,12 +2,11 @@ apiVersion: v2
 appVersion: "2.4"
 description: Roll your own OpenVPN server
 name: k8s-ovpn-chart
-version: 0.1.5
+version: 0.2.0
 type: application
-
-# source:
-#   - https://github.com/suda/k8s-ovpn-chart
-# home: https://shokohsc.github.io/charts/
+source:
+  - https://github.com/suda/k8s-ovpn-chart
+home: https://github.com/suda/k8s-ovpn-chart
 maintainers:
   - email: admin@suda.pl
     name: suda
