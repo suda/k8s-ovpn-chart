@@ -1,0 +1,20 @@
+{{- if .Values.automatic.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "k8s-ovpn-chart.name" . }}
+  namespace: {{ .Values.namespace.name }}
+  labels: {{- include "k8s-ovpn-chart.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-15"
+spec:
+  accessModes:
+  {{- range .Values.automatic.persistence.accessModes }}
+    - {{ . | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.automatic.persistence.size | quote }}
+  {{ include "k8s-ovpn-chart.storageClass" . }}
+{{- end }}

@@ -1,4 +1,4 @@
-{{- if .Values.limitTraficToNamespace -}}
+{{- if .Values.limitTraficToNamespace }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -19,4 +19,4 @@ spec:
           cidr: 0.0.0.0/0
           except:
           - {{ .Values.limitedCidr }}
-{{- end -}}
+{{- end }}

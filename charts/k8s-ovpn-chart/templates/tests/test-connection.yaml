@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "k8s-ovpn-chart.fullname" . }}-test-connection"
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    {{- include "k8s-ovpn-chart.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: resolv-conf
+      image: busybox
+      command: ['cat']
+      args: ['/etc/resolv.conf']
+    - name: nc
+      image: busybox
+      command: ['nc']
+      {{- if eq .Values.service.protocol "UDP" }}
+      args: ['-v', '-z', '-u', '{{ include "k8s-ovpn-chart.fullname" . }}', '{{ .Values.service.port }}']
+      {{- else }}
+      args: ['-v', '-z', '{{ include "k8s-ovpn-chart.fullname" . }}', '{{ .Values.service.port }}']
+      {{- end }}
+  restartPolicy: Never

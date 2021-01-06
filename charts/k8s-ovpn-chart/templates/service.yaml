@@ -9,16 +9,12 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   {{- if .Values.service.annotations }}
-  annotations:
-    {{ toYaml .Values.service.annotations | indent 4 }}
+  annotations: {{ toYaml .Values.service.annotations | indent 4 }}
   {{- end }}
 spec:
   ports:
-    - port: 1194
-      targetPort: 1194
-      {{- if not .Values.service.omitNodePort }}
-      nodePort: {{ .Values.service.port }}
-      {{- end }}
+    - port: {{ .Values.service.port }}
+      targetPort: openvpn
       protocol: {{ .Values.service.protocol }}
       name: openvpn
   selector:

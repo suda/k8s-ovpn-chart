@@ -8,12 +8,19 @@ Think of it as roll-your-own Nord/Express VPN in your Kubernetes cluster.
 ## Usage
 
 ```bash
-$ helm repo add k8s-ovpn https://raw.githubusercontent.com/suda/k8s-ovpn-chart/master
+$ helm repo add k8s-ovpn https://raw.githubusercontent.com/suda/k8s-ovpn-chart/master/charts
 $ helm repo update
 $ helm install k8s-ovpn/k8s-ovpn-chart
 ```
+### Skip manual steps: Automatic and Insecure way (not for production)
 
-### Generate necessary secrets
+```bash
+$ helm repo add k8s-ovpn https://raw.githubusercontent.com/suda/k8s-ovpn-chart/master/charts
+$ helm repo update
+$ helm install k8s-ovpn/k8s-ovpn-chart --set automatic.enabled=true
+```
+
+### Generate necessary secrets (manual way & secure CA)
 
 ```bash
 $ git clone https://github.com/suda/k8s-ovpn-chart.git
@@ -38,17 +45,29 @@ But if you really want to, you can enable it by setting `limitTraficToNamespace`
 
 The following table lists the configurable parameters of the `k8s-ovpn` chart and their default values.
 
-| Parameter                | Description                                         | Default             |
-| ------------------------ | --------------------------------------------------- | ------------------- |
-| `image.repository`       | container image repository                          | `kylemanna/openvpn` |
-| `image.tag`              | container image tag                                 | `2.3`               |
-| `image.pullPolicy`       | container image pull policy                         | `IfNotPresent`      |
-| `tolerations`            | node taints to tolerate (requires Kubernetes >=1.6) | `[]`                |
-| `affinity`               | node/pod affinities (requires Kubernetes >=1.6)     | `{}`                |
-| `nodeSelector`           | node labels for pod assignment                      | `{}`                |
-| `resources`              | pod resource requests & limits                      | `{}`                |
-| `limitTraficToNamespace` | limit network traffic just to OpenVPN namespace     | `true`              |
-| `limitedCidr`            | CIDR to be blocked out                              | `10.0.0.0/8`        |
+| Parameter                           | Description                                                                                                               | Default             |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `image.repository`                  | container image repository                                                                                                | `kylemanna/openvpn` |
+| `image.tag`                         | container image tag                                                                                                       | `2.4`               |
+| `image.pullPolicy`                  | container image pull policy                                                                                               | `IfNotPresent`      |
+| `tolerations`                       | node taints to tolerate (requires Kubernetes >=1.6)                                                                       | `[]`                |
+| `affinity`                          | node/pod affinities (requires Kubernetes >=1.6)                                                                           | `{}`                |
+| `nodeSelector`                      | node labels for pod assignment                                                                                            | `{}`                |
+| `resources`                         | pod resource requests & limits                                                                                            | `{}`                |
+| `limitTraficToNamespace`            | limit network traffic just to OpenVPN namespace                                                                           | `true`              |
+| `limitedCidr`                       | CIDR to be blocked out                                                                                                    | `10.0.0.0/8`        |
+| `automatic.cipher`                  | Cipher used                                                                                                               | `"AES-256-CBC"`     |
+| `automatic.digestAlgorythm`         | Authenticate  packets with HMAC using the given message digest algorithm (auth).                                          | `"SHA384"`          |
+| `automatic.dnsServer`               | DNS Server IP                                                                                                             | `"8.8.8.8"`         |
+| `automatic.enabled`                 | Skip manual steps and generate configuration & pki according to values config, Warning, PKI will be passwordless !        | `false`             |
+| `automatic.externalHostname`        | Hostname OR Ip of cluster openvpn entrypoint, default to 'domain.tld' so you must define it                               | `""`                |
+| `automatic.externalPort`            | Port cluster openvpn entrypoint, defaults to service.port (nodePort)                                                      | `""`                |
+| `automatic.extraOptions`            | Additional options for openvpn configuration                                                                              | `[]`                |
+| `automatic.persistence.accessModes` | PersistentVolumeClaim access modes                                                                                        | `["ReadWriteOnce"]` |
+| `automatic.persistence.annotations` | PersistentVolumeClaim annotations                                                                                         | `{}`                |
+| `automatic.persistence.mountPath`   | PersistentVolumeClaim mounting path                                                                                       | `"/etc/openvpn"`    |
+| `automatic.persistence.size`        | PersistentVolumeClaim size request                                                                                        | `"8Gi"`             |
+
 
 ## Acknowledgements
 

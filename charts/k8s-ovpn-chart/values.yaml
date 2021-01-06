@@ -1,0 +1,105 @@
+image:
+  # image.repository -- container image repository
+  repository: kylemanna/openvpn
+  # image.tag -- container image tag or Chart appVersion if undefined
+  tag: ""
+  # image.pullPolicy -- container image pull policy
+  pullPolicy: IfNotPresent
+
+namespace:
+  # namespace -- release namespace
+  name: ovpn
+
+# nameOverride -- release name override option
+nameOverride: ""
+# fullnameOverride -- release full release name override option
+fullnameOverride: ""
+
+service:
+  # service.protocol -- OpenVPN protocol
+  protocol: TCP
+  # service.port -- OpenVPN port
+  port: 31304
+  # service.type -- Service type
+  type: NodePort
+
+# limitTraficToNamespace -- limit network traffic just to OpenVPN namespace
+limitTraficToNamespace: true
+# limitedCidr -- CIDR to be blocked out
+limitedCidr: "10.0.0.0/8"
+
+# resources -- pod resource requests & limits
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# nodeSelector -- node labels for pod assignment
+nodeSelector: {}
+
+# tolerations -- node taints to tolerate (requires Kubernetes >=1.6)
+tolerations: []
+
+# affinity -- node/pod affinities (requires Kubernetes >=1.6)
+affinity: {}
+
+automatic:
+  # automatic.enabled -- Skip manual steps and generate configuration & pki according to values config, Warning, PKI will be passwordless !
+  enabled: false
+  # automatic.externalHostname -- Hostname OR Ip of cluster openvpn entrypoint, default to 'domain.tld' so you must define it
+  externalHostname: ""
+  # automatic.externalPort -- Port cluster openvpn entrypoint, defaults to service.port (nodePort)
+  externalPort: ""
+  # automatic.cipher -- Cipher used
+  cipher: AES-256-CBC
+  # automatic.digestAlgorythm -- Authenticate  packets with HMAC using the given message digest algorithm (auth).
+  digestAlgorythm: SHA384
+  # automatic.dnsServer -- DNS Server IP
+  dnsServer: 8.8.8.8
+  # automatic.extraOptions -- Additional options for openvpn configuration
+  extraOptions: []
+
+  ## Enable persistence using Persistent Volume Claims
+  ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+  ##
+  persistence:
+    # automatic.persistence.existingClaim -- Existing PersistentVolumeClaim
+    # existingClaim:
+
+    ## Data volume mount path
+    ##
+    # automatic.persistence.mountPath -- PersistentVolumeClaim mounting path
+    mountPath: /etc/openvpn
+
+    ## Persistent Volume Access Mode
+    ##
+    # automatic.persistence.accessModes -- PersistentVolumeClaim access modes
+    accessModes:
+      - ReadWriteOnce
+
+    ## Persistent Volume size
+    ##
+    # automatic.persistence.size -- PersistentVolumeClaim size request
+    size: 8Gi
+
+    ## Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # automatic.persistence.storageClass -- PersistentVolumeClaim storage class
+    # storageClass: "-"
+
+    ## Persistent Volume Claim annotations
+    ##
+    # automatic.persistence.annotations -- PersistentVolumeClaim annotations
+    annotations: {}

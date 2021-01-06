@@ -22,7 +22,7 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
-        - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        - image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: {{ .Chart.Name }}
           ports:
@@ -34,6 +34,10 @@ spec:
               add:
                 - NET_ADMIN
           volumeMounts:
+            {{- if .Values.automatic.enabled }}
+            - name: data
+              mountPath: {{ .Values.automatic.persistence.mountPath }}
+            {{- else }}
             - name: ovpn0-key
               mountPath: /etc/openvpn/pki/private
             - name: ovpn0-cert
@@ -44,6 +48,7 @@ spec:
               mountPath: /etc/openvpn
             - name: ccd0
               mountPath: /etc/openvpn/ccd
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -59,6 +64,11 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       volumes:
+        {{- if .Values.automatic.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ if .Values.automatic.persistence.existingClaim }}{{ .Values.automatic.persistence.existingClaim }}{{- else }}{{ include "k8s-ovpn-chart.name" . }}{{- end }}
+        {{- else }}
         - name: ovpn0-key
           secret:
             secretName: ovpn0-key
@@ -76,3 +86,4 @@ spec:
         - name: ccd0
           configMap:
             name: ccd0
+        {{- end }}
