@@ -1,3 +1,5 @@
+# ⚠️ This chart has been deprecated. Please switch to the new one: https://artifacthub.io/packages/helm/suda/personal-ovpn
+
 [![](https://img.shields.io/static/v1.svg?label=Deploy%20on&message=DigitalOcean&color=blue)](https://www.digitalocean.com/products/kubernetes/?refcode=fef9487dad1e&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste) [![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/k8s-ovpn)](https://artifacthub.io/packages/search?repo=k8s-ovpn)
 
 # Private Kubernetes OpenVPN Helm chart
